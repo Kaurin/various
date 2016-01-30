@@ -1,6 +1,9 @@
 #!/bin/sh
 
 
+####################################################
+####################################################
+
 # These variables need to be set
 
 # Security group ID (VPC). EC2-Classic not supported
@@ -8,12 +11,15 @@ SG="sg-xxxxxx"
 
 # This script relies on SSH profiles defined in ~/.ssh/config
 SSH_PROFILE_NAME="my_ssh_profile"
+MYIP_PROVIDER_CURL_STRING="https://ifconfig.co"
 
+####################################################
+####################################################
 
 # Don't change stuff below unless you know what you are doing
 
-echo "Getting our IP from ifconfig.me..."
-MYIP="$(/usr/bin/curl -s http://ifconfig.me/ip)"
+echo "Getting our IP from $MYIP_PROVIDER_CURL_STRING..."
+MYIP="$(/usr/bin/curl -4s $MYIP_PROVIDER_CURL_STRING)"
 echo "Got it! It's $MYIP"
 
 # Reusable in both autorize/revoke
