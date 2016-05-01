@@ -1,16 +1,24 @@
-#!/bin/sh
+#!/bin/sh -e
 
 ####################################################
 ####################################################
 
-# These variables need to be set
+### These variables need to be set
 
-# Security group ID (VPC). EC2-Classic not supported
+### Security group ID (VPC). EC2-Classic not supported
 SG="sg-xxxxxx"
 
-# This script relies on SSH profiles defined in ~/.ssh/config
+### This script relies on SSH profiles defined in ~/.ssh/config
 SSH_PROFILE_NAME="my_ssh_profile"
 MYIP_PROVIDER_CURL_STRING="https://ifconfig.co"
+
+### Use/change these if you wish, and if you know what they are
+# export AWS_DEFAULT_PROFILE="default"
+# export AWS_DEFAULT_REGION="eu-west-1"
+# export AWS_CONFIG_FILE=""
+# export AWS_ACCESS_KEY_ID=""
+# export AWS_SECRET_ACCESS_KEY=""
+# export AWS_SESSION_TOKEN=""
 
 ####################################################
 ####################################################
