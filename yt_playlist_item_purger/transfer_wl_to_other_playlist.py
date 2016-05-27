@@ -14,7 +14,9 @@ from oauth2client.tools import argparser, run_flow
 # WL is the special "Watch Later" playlist that every YT account has.
 # Because "WL" doesn't work in this script, you can try any other normal playlists
 # CAREFUL: Your test playlist will get purged of playlist items
-playlist_id="PLkKPejrtZUZB-mWGYSdxmuSZW5Pzy0Wi2"
+playlist_Id="PLkKPejrtZUZB-mWGYSdxmuSZW5Pzy0Wi2"
+playlist_WL="WL"
+wl_videos=[]
 
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
 # the OAuth 2.0 information for this application, including its client_id and
@@ -65,11 +67,11 @@ def get_authenticated_service():
   return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
     http=credentials.authorize(httplib2.Http()))
 
-# function that pruges youtube plalists.
-def purge_playlist(youtube, playlist_id):
+## GET VIDO IDs (not playlist IDs) FROM WL
+def get_wl_videos(youtube):
     playlistitems_list_request = youtube.playlistItems().list(
-        playlistId=playlist_id,
-        part="id",
+        playlistId="WL",
+        part="snippet",
         maxResults=50
     )
 
@@ -77,26 +79,40 @@ def purge_playlist(youtube, playlist_id):
         playlistitems_list_response = playlistitems_list_request.execute()
 
         for playlist_item in playlistitems_list_response["items"]:
-          playlist_video_id = playlist_item["id"]
-          delete_playlist_item(youtube,playlist_video_id)
+          wl_videos.append(playlist_item["snippet"]["resourceId"]["videoId"])
 
         playlistitems_list_request = youtube.playlistItems().list_next(
           playlistitems_list_request, playlistitems_list_response)
 
-# Helper function for individual playlist item deletion
-# Used inside purge_playlist function
-def delete_playlist_item(youtube, playlist_video_id):
-    print "Deleting playlist video ID %s" % (playlist_video_id)
-    youtube.playlistItems().delete(
-        id=playlist_video_id
-    ).execute()
+## Put 1 video into temporary playlist:
+def insert_playlist_video(youtube, videoId):
+    playlistitems_insert_request = youtube.playlistItems().insert(
+      part="snippet",
+      body=dict(
+        snippet=dict(
+          playlistId=playlist_Id,
+          resourceId=dict(
+            kind="youtube#video",
+            videoId=videoId
+          )
+        )
+      )
+    )
+    playlistitems_insert_response = playlistitems_insert_request.execute()
+
+
+
+
+
 
 ## MAIN
 if __name__ == "__main__":
   youtube = get_authenticated_service()
   try:
-    purge_playlist(youtube,playlist_id)
-
+    get_wl_videos(youtube)
+    for videoId in wl_videos:
+      print "Adding video: " + videoId
+      insert_playlist_video(youtube,videoId)
   except HttpError, e:
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
   else:
