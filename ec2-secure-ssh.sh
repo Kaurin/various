@@ -1,9 +1,8 @@
 #!/bin/sh -e
 
 ####################################################
-####################################################
-
 ### These variables need to be set
+####################################################
 
 ### Security group ID (VPC). EC2-Classic not supported
 SG="sg-xxxxxx"
@@ -21,9 +20,10 @@ MYIP_PROVIDER_CURL_STRING="https://ifconfig.co"
 # export AWS_SESSION_TOKEN=""
 
 ####################################################
+### End of the variable block.
+### Don't change stuff below 
+### unless you know what you are doing
 ####################################################
-
-# Don't change stuff below unless you know what you are doing
 
 echo "Getting our IP from $MYIP_PROVIDER_CURL_STRING..."
 MYIP="$(/usr/bin/curl -4s $MYIP_PROVIDER_CURL_STRING)"
