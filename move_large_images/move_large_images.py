@@ -8,6 +8,8 @@ from shutil import move
 
 srcpath="/home/username/Desktop/wps"
 dstpath="/home/username/Desktop/bigwps"
+width=1920
+height=1080
 
 if not exists(dstpath):
     makedirs(dstpath)
@@ -17,9 +19,9 @@ for i in listdir(srcpath):
         fullsrc = join(srcpath,i)
         try:
             im=Image.open(fullsrc)
-            if im.size[0] < 1920:
+            if im.size[0] < width:
                 continue
-            if im.size[1] < 1080:
+            if im.size[1] < height:
                 continue
             move(fullsrc, join(dstpath,i))
         except:
