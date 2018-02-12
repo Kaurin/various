@@ -42,23 +42,10 @@ rm temp.7z
 
 
 # Any file page with a .3-letter extension, then further grep for .gif
-cat temp | grep -PZo 'File\:.*?\....' | grep "\.$EXTENSION" | sort | uniq > gifs.txt
+cat temp | grep -PZo 'File\:.*?\....' | grep "\.$EXTENSION" | tr ' ' '_' | sort | uniq > gifs.txt
 
-# Loop over the resulting file, line by line (Easiest solution I found due to spaces in filenames)
-while read line
-do
-  webfile="$(echo $line | tr ' ' '_')" # webfile has _ instead of spaces
-  plainfile="$(echo $webfile | sed 's/^File://g')" # This is the file's basename
-  # URLs we are interested in have the 'og:image' tag
-  urls=$(curl -s  $BASE_URL/$webfile | grep 'og\:image' | grep -oP '"https://.*?"' | tr -d '"')
-  num=1 # Control in case we have more than 1 'og:image'
-  for url in $urls
-  do
-    (( $num > 1 )) && numfile=$num
-    wget --no-verbose "$url" -O $PICS_DIR/$plainfile$numfile
-    (( num++ ))
-  done
-done < gifs.txt
+parallel -a gifs.txt echo "$BASE_URL/{}" |
+  parallel --retries 3 --eta --verbose wget --quiet "{}" -O "$PICS_DIR/{= s/.*?File:// =}" || true
 
 # Cleanup
 rm temp gifs.txt
