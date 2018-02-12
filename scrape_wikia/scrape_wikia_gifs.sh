@@ -12,7 +12,7 @@ BASE_URL=http://metalslug.wikia.com/wiki
 # Desired 3-letter extension
 EXTENSION=gif
 
-# $BASE_URL/Special:Statistics
+# http://metalslug.wikia.com/wiki/Special:Statistics
 CURRENT_DB_DUMP="http://s3.amazonaws.com/wikia_xml_dumps/m/me/metalslug_pages_current.xml.7z"
 
 # Destination dir
